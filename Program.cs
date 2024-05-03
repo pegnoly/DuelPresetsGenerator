@@ -1,6 +1,8 @@
 ﻿using DuelPresetsGenerator;
 using DuelPresetsGenerator.Parsers.Base;
 using DuelPresetsGenerator.Parsers;
+using DuelPresetsGenerator.Parser;
+using DuelPresetsGenerator.Generator;
 
 string appPath = Directory.GetCurrentDirectory().Replace("\\bin\\Debug\\net6.0", string.Empty);
 Paths.Database = $"{appPath}\\database.db";
@@ -16,12 +18,12 @@ if (mode == "1") {
     FilesDatabase filesDatabase = new FilesDatabase();
     filesDatabase.Create(new DirectoryInfo(Paths.HommData));
     List<IParser> parsers = new List<IParser>() {
-        new HeroesFilesParser(), new CreaturesFilesParser(), new ArtifactFilesParser()
+        new HeroesFilesParser(), new CreaturesFilesParser(), new ArtifactFilesParser(), new SpellsFilesParser(), new HeroSkillParser()
     };
-    foreach(IParser parser in parsers) {
-        parser.Parse(filesDatabase);
-    }
+    Parser parser = new Parser(filesDatabase, parsers);
+    parser.Run();
 }
 else if (mode == "2") {
-
+    Generator generator = new Generator();
+    generator.Run();
 }

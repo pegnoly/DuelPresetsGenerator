@@ -3,29 +3,31 @@
 namespace DuelPresetsGenerator.Parsers.Base {
 
     public interface IParser {
-        void Parse(FilesDatabase database);
+        string Parse(FilesDatabase database);
     }
 
-    public class DBObject<T, V> {
-        public T? ID { get; set; }
-        public V? Obj;
-    }
-
+    /// <summary>
+    /// База данных файлов игры для парсинга.
+    /// </summary>
     public class FilesDatabase {
 
         private Dictionary<string, string> files = new Dictionary<string, string>();
         private Dictionary<string, DateTime> modifiedTimes = new Dictionary<string, DateTime>();
 
+        /// <summary>
+        /// Чекает паки в указанной папке и производит словарь актуальных файлов игры и их содержимого.
+        /// </summary>
+        /// <param name="directory"></param>
         public void Create(DirectoryInfo directory) {
             foreach (FileInfo file in directory.GetFiles()) {
                 if (file.Extension == ".pak") {
                     using (ZipFile zip = ZipFile.Read(file.FullName)) {
                         foreach (ZipEntry entry in zip.Entries) {
                             if (IsUsableFile(entry.FileName)) {
-                                if (!(modifiedTimes.ContainsKey(entry.FileName) && modifiedTimes[entry.FileName] > entry.ModifiedTime)) {
+                                if (!files.ContainsKey(entry.FileName) || (modifiedTimes[entry.FileName] < entry.LastModified)) {
                                     StreamReader reader = new StreamReader(entry.OpenReader());
                                     files[entry.FileName] = reader.ReadToEnd();
-                                    modifiedTimes[entry.FileName] = entry.ModifiedTime;
+                                    modifiedTimes[entry.FileName] = entry.LastModified;
                                 }
                             }
                         }
@@ -49,7 +51,10 @@ namespace DuelPresetsGenerator.Parsers.Base {
         /// </summary>
         /// <param name="key">Имя файла в файлах игры.</param>
         /// <returns>Содержимое файла в текстовом формате</returns>
-        public string GetFile(string key) {
+        public string? GetFile(string key) {
+            if (!files.ContainsKey(key)) {
+                return null;
+            }
             return files[key];
         }
     }

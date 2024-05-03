@@ -1,4 +1,4 @@
-﻿using DuelPresetsGenerator.Entities.Creature;
+﻿using DuelPresetsGenerator.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,7 +40,7 @@ namespace DuelPresetsGenerator.Common.Objects {
 
     [Serializable]
     public class ArmySlot {
-        public CreatureType Creature { get; set; }
+        public CreatureID Creature { get; set; }
         public int Count { get; set; }
     }
 }

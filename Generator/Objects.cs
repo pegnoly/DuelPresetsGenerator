@@ -1,14 +1,28 @@
-﻿using DuelPresetsGenerator.Common.Objects;
-using DuelPresetsGenerator.Entities.Artifact;
-using DuelPresetsGenerator.Entities.Player;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using DuelPresetsGenerator.Common;
+using DuelPresetsGenerator.Common.Objects;
+using DuelPresetsGenerator.Entities;
 using System.Xml.Serialization;
 
 namespace DuelPresetsGenerator.Generator.Objects {
+
+    [Serializable]
+    public class Action {
+        public string? FunctionName { get; set; }
+    }
+
+    [Serializable]
+    public class Trigger {
+        public Action? Action { get; set; }
+    }
+
+    [Serializable]
+    public class HeroTexturesSet {
+        public string? Icon128x128 { get; set; }
+        public string? Icon64x64 { get; set; }
+        public string? RoundedFace { get; set; }
+        public string? LeftFace { get; set; }
+        public string? RightFace { get; set; }
+    }
 
     [Serializable]
     public class AdvMapHero {
@@ -26,7 +40,34 @@ namespace DuelPresetsGenerator.Generator.Objects {
         public int Experience { get; set; }
         [XmlArrayItem("Item")]
         public List<ArmySlot>? armySlots { get; set; } = new List<ArmySlot>();
-        [XmlElement("artifactIDs")]
-        public List<ArtifactID>? Artifacts { get; set; } = new List<ArtifactID>();
+        [XmlArrayItem("Item")]
+        public List<ArtifactID>? artifactIDs { get; set; } = new List<ArtifactID>();
+        [XmlArrayItem("Item")]
+        public List<int> isUntransferable { get; set; } = new List<int>();
+        public Editable Editable { get; set; } = new Editable();
+        public int OverrideMask { get; set; }
+        public Mastery PrimarySkillMastery { get; set; }
+        public Trigger? LossTrigger { get; set; } = new Trigger();
+        public bool AllowQuickCombat { get; set; }
+        public HeroTexturesSet? Textures { get; set; } = new HeroTexturesSet();
+        public int PresetPrice { get; set; }
+        [XmlArrayItem("Item")]
+        public List<TownType> BannedRaces { get; set; } = new List<TownType>();
+    }
+
+    [Serializable]
+    public class DuelPreset {
+        public FileRef? PresetNameFileRef { get; set; }
+        public FileRef? LeftFace { get; set; }
+        public FileRef? RightFace { get; set; }
+        public FileRef? RoundedFace { get; set; }
+        public FileRef? PresetHero { get; set; }
+    }
+
+    [Serializable]
+    [XmlRoot("DuelPresets")]
+    public class DuelPresetsTable {
+        [XmlArrayItem("Item")]
+        public List<DuelPreset>? presets { get; set; } = new List<DuelPreset>();
     }
 }
